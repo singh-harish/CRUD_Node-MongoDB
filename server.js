@@ -7,9 +7,7 @@ port= process.env.PORT || 8080;
 
 
 // set the route
-app.get('/', (req, res) =>{
-  res.send("HELLO , I AM APP");
-});
+app.use(require('./app/routes'));
 
 // start our server
 app.listen(port, () =>{
