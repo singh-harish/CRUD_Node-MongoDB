@@ -13,4 +13,5 @@ module.exports = router;
 router.get('/', mainController.showHome);
 
 // events routes
-router.get('/events', eventsController.showEvents);
+router.get('/events',       eventsController.showEvents);
+router.get('/events/:slug', eventsController.showSingle);
