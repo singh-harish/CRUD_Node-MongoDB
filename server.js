@@ -1,13 +1,12 @@
 // load environment variables
 require('dotenv').config();
 
- // grab dependencies
-const express= require('express'),
-app= express(),
-port= process.env.PORT || 8080,
-expressLayouts= require('express-ejs-layouts'),
-mongoose= require('mongoose')
-;
+// grab dependencies
+const express = require('express'),
+  app = express(),
+  port = process.env.PORT || 8080,
+  expressLayouts = require('express-ejs-layouts'),
+  mongoose = require('mongoose');
 
 // configure application ================================
 
@@ -25,6 +24,6 @@ mongoose.connect(process.env.DB_URI);
 app.use(require('./app/routes'));
 
 // start our server =====================================
-app.listen(port, () =>{
+app.listen(port, () => {
   console.log(`APP LISTENING ON http://localhost:${port}`);
 });

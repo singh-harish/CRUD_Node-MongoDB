@@ -1,9 +1,8 @@
 // create new Express Router
-const express= require('express'),
-router= express.Router(),
-mainController = require('./controllers/main.controller'),
-eventsController= require('./controllers/events.controller')
-;
+const express = require('express'),
+  router = express.Router(),
+  mainController = require('./controllers/main.controller'),
+  eventsController = require('./controllers/events.controller');
 
 // export Router
 module.exports = router;
@@ -13,5 +12,14 @@ module.exports = router;
 router.get('/', mainController.showHome);
 
 // events routes
-router.get('/events',       eventsController.showEvents);
+router.get('/events', eventsController.showEvents);
+
+// seed events
+router.get('/events/seed', eventsController.seedEvents);
+
+// create eventS
+// edit eventS
+// delete eventS
+
+// show single eventS
 router.get('/events/:slug', eventsController.showSingle);
