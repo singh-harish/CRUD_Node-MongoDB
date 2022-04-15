@@ -32,7 +32,8 @@ function showSingle(req, res) {
       res.send("Events Not Found");
     }
     res.render('pages/single', {
-      event: event
+      event: event,
+      success: req.flash('success')
     });
   });
 }
@@ -73,11 +74,24 @@ function seedEvents(req, res) {
 
 // show the create form
 function showCreate(req, res) {
-  res.render('pages/create');
+  res.render('pages/create', {
+    errors: req.flash('errors')
+  });
 }
 
 // process create form
 function processCreate(req, res) {
+  // validate information
+  req.checkBody('name', 'Name is Required').notEmpty();
+  req.checkBody('description', 'Description is Required').notEmpty();
+
+  // if errors, redirect and save error to flash
+  const errors = req.validationErrors();
+  if(errors){
+    req.flash('errors', errors.map(err => err.msg));
+    return res.redirect('/events/create');
+  }
+
   // create a new event
   const event= new Event({
     name: req.body.name,
@@ -87,6 +101,9 @@ function processCreate(req, res) {
   // save event
   event.save( (err) => {
     if(err) throw err;
+
+    // set a success flash message
+    req.flash('success', 'Successfully created Event.');
 
     // redirect to newly created event
     res.redirect(`/events/${event.slug}`);
