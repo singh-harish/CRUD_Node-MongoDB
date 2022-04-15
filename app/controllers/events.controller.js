@@ -5,7 +5,9 @@ module.exports = {
   showSingle: showSingle,
   seedEvents: seedEvents,
   showCreate: showCreate,
-  processCreate: processCreate
+  processCreate: processCreate,
+  showEdit: showEdit,
+  processEdit: processEdit
 }
 
 
@@ -18,7 +20,8 @@ function showEvents(req, res) {
       res.send("Events Not Found");
     }
     res.render('pages/events', {
-      events: events
+      events: events,
+      success: req.flash('success')
     });
   });
 }
@@ -26,7 +29,9 @@ function showEvents(req, res) {
 // show a single events
 function showSingle(req, res) {
   // get a single data
-  Event.findOne({ slug: req.params.slug }, (err, event) => {
+  Event.findOne({
+    slug: req.params.slug
+  }, (err, event) => {
     if (err) {
       res.status(404);
       res.send("Events Not Found");
@@ -87,20 +92,20 @@ function processCreate(req, res) {
 
   // if errors, redirect and save error to flash
   const errors = req.validationErrors();
-  if(errors){
+  if (errors) {
     req.flash('errors', errors.map(err => err.msg));
     return res.redirect('/events/create');
   }
 
   // create a new event
-  const event= new Event({
+  const event = new Event({
     name: req.body.name,
     description: req.body.description
   });
 
   // save event
-  event.save( (err) => {
-    if(err) throw err;
+  event.save((err) => {
+    if (err) throw err;
 
     // set a success flash message
     req.flash('success', 'Successfully created Event.');
@@ -108,4 +113,47 @@ function processCreate(req, res) {
     // redirect to newly created event
     res.redirect(`/events/${event.slug}`);
   });
+}
+
+
+// show edit form
+function showEdit(req, res) {
+  Event.findOne({ slug: req.params.slug }, (err, event) => {
+    res.render('pages/edit', {
+      event: event,
+      errors: req.flash('errors')
+    });
+  });
+}
+
+// process edit form
+function processEdit(req, res) {
+  // validate information
+  req.checkBody('name', 'Name is Required').notEmpty();
+  req.checkBody('description', 'Description is Required').notEmpty();
+
+  // if errors, redirect and save error to flash
+  const errors = req.validationErrors();
+  if (errors) {
+    req.flash('errors', errors.map(err => err.msg));
+    return res.redirect(`/events/${req.params.slug}/edit`);
+  }
+
+  // find a current eventS
+  Event.findOne({ slug: req.params.slug }, (err, event) => {
+    // update event
+    event.name = req.body.name;
+    event.description = req.body.description;
+
+    event.save((err) => {
+      if(err)
+        throw err;
+
+      // success flash messsage
+      req.flash('success', 'Successfully updated Event.');
+      // redirect back to /events
+      res.redirect('/events');
+    });
+  });
+
 }

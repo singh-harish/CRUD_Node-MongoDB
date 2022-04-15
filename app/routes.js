@@ -20,7 +20,11 @@ router.get('/events/seed', eventsController.seedEvents);
 // create eventS
 router.get('/events/create', eventsController.showCreate);
 router.post('/events/create', eventsController.processCreate);
+
 // edit eventS
+router.get('/events/:slug/edit', eventsController.showEdit);
+router.post('/events/:slug', eventsController.processEdit); 
+
 // delete eventS
 
 // show single eventS
